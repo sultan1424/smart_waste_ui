@@ -8,6 +8,11 @@ import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import ErrorMessage from "@/components/ui/ErrorMessage";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 
+const TOOLTIP_STYLE = {
+  background: "#1e2535", border: "1px solid rgba(255,255,255,0.1)",
+  borderRadius: 10, fontSize: 12, color: "#f0f2f8",
+};
+
 export default function PickupsPage() {
   const [pickups, setPickups] = useState<PickupRow[]>([]);
   const [loading, setLoading] = useState(true);
@@ -15,127 +20,147 @@ export default function PickupsPage() {
   const [filter, setFilter]   = useState<"all"|"planned"|"completed"|"missed">("all");
 
   useEffect(() => {
-    api.pickupsToday()
-      .then(setPickups)
-      .catch(e => setError(e.message))
-      .finally(() => setLoading(false));
+    api.pickupsToday().then(setPickups).catch(e => setError(e.message)).finally(() => setLoading(false));
   }, []);
 
-  const filtered = filter === "all" ? pickups : pickups.filter(p => p.status === filter);
-
+  const filtered  = filter === "all" ? pickups : pickups.filter(p => p.status === filter);
   const planned   = pickups.filter(p => p.status === "planned").length;
   const completed = pickups.filter(p => p.status === "completed").length;
   const missed    = pickups.filter(p => p.status === "missed").length;
 
-  const chartData = [{ name: "Today", Planned: planned, Completed: completed, Missed: missed }];
-
-  // Group by route
   const byRoute = pickups.reduce((acc, p) => {
-    acc[p.route_id] = (acc[p.route_id] ?? 0) + 1;
-    return acc;
+    acc[p.route_id] = (acc[p.route_id] ?? 0) + 1; return acc;
   }, {} as Record<string, number>);
-  const routeData = Object.entries(byRoute).map(([route, count]) => ({ route, count }));
 
   return (
     <AuthGuard allowedRoles={["collector"]}>
-      <div className="space-y-6">
+      <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+
         {/* Header */}
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">🚛 Pickup Management</h1>
-          <p className="text-gray-400 text-sm mt-1">Today's pickup schedule and route overview</p>
+        <div className="fade-up">
+          <h1 style={{ fontSize: 20, fontWeight: 600, color: "var(--text-1)" }}>Pickup Management</h1>
+          <p style={{ fontSize: 13, color: "var(--text-3)", marginTop: 4 }}>Today's pickup schedule and route overview</p>
         </div>
 
         {/* Summary cards */}
-        <div className="grid grid-cols-3 gap-4">
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 12 }} className="fade-up-1">
           {[
-            { label: "Planned",   value: planned,   color: "text-blue-600",  bg: "bg-blue-50",  icon: "📋" },
-            { label: "Completed", value: completed, color: "text-green-600", bg: "bg-green-50", icon: "✅" },
-            { label: "Missed",    value: missed,    color: "text-red-600",   bg: "bg-red-50",   icon: "❌" },
+            { label: "Planned",   value: planned,   color: "#60a5fa", bg: "rgba(59,130,246,0.1)"  },
+            { label: "Completed", value: completed, color: "#4ade80", bg: "rgba(34,197,94,0.1)"   },
+            { label: "Missed",    value: missed,    color: "#f87171", bg: "rgba(239,68,68,0.1)"   },
           ].map(c => (
-            <div key={c.label} className={`${c.bg} rounded-2xl border border-gray-100 p-5`}>
-              <div className="text-2xl mb-2">{c.icon}</div>
-              <div className={`text-3xl font-bold ${c.color}`}>{c.value}</div>
-              <div className="text-gray-500 text-sm mt-1">{c.label}</div>
+            <div key={c.label} className="card" style={{ padding: "18px 20px" }}>
+              <div style={{ fontSize: 12, color: "var(--text-3)", marginBottom: 10 }}>{c.label}</div>
+              <div style={{ fontSize: 32, fontWeight: 600, color: c.color }}>{c.value}</div>
             </div>
           ))}
         </div>
 
         {/* Charts */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Status chart */}
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-            <h2 className="font-semibold text-gray-900 mb-4">Pickups by Status</h2>
-            <ResponsiveContainer width="100%" height={220}>
-              <BarChart data={chartData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-                <XAxis dataKey="name" stroke="#94a3b8" />
-                <YAxis stroke="#94a3b8" />
-                <Tooltip contentStyle={{ borderRadius: 12, fontSize: 12, border: "1px solid #e2e8f0" }} />
-                <Legend />
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }} className="fade-up-2">
+          <div className="card" style={{ padding: 20 }}>
+            <h2 style={{ fontSize: 14, fontWeight: 600, color: "var(--text-1)", marginBottom: 16 }}>
+              Status Overview
+            </h2>
+            <ResponsiveContainer width="100%" height={200}>
+              <BarChart data={[{ name: "Today", Planned: planned, Completed: completed, Missed: missed }]} barGap={4}>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
+                <XAxis dataKey="name" stroke="#545c72" tick={{ fontSize: 11, fill: "#545c72" }} />
+                <YAxis stroke="#545c72" tick={{ fontSize: 11, fill: "#545c72" }} />
+                <Tooltip contentStyle={TOOLTIP_STYLE} />
+                <Legend wrapperStyle={{ fontSize: 12, color: "#8b92a8" }} />
                 <Bar dataKey="Planned"   fill="#3b82f6" radius={[6,6,0,0]} />
                 <Bar dataKey="Completed" fill="#22c55e" radius={[6,6,0,0]} />
                 <Bar dataKey="Missed"    fill="#ef4444" radius={[6,6,0,0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
-
-          {/* Route distribution */}
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-            <h2 className="font-semibold text-gray-900 mb-4">Pickups by Route</h2>
-            <ResponsiveContainer width="100%" height={220}>
-              <BarChart data={routeData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-                <XAxis dataKey="route" stroke="#94a3b8" tick={{ fontSize: 11 }} />
-                <YAxis stroke="#94a3b8" />
-                <Tooltip contentStyle={{ borderRadius: 12, fontSize: 12, border: "1px solid #e2e8f0" }} />
-                <Bar dataKey="count" fill="#22c55e" radius={[6,6,0,0]} name="Pickups" />
+          <div className="card" style={{ padding: 20 }}>
+            <h2 style={{ fontSize: 14, fontWeight: 600, color: "var(--text-1)", marginBottom: 16 }}>
+              By Route
+            </h2>
+            <ResponsiveContainer width="100%" height={200}>
+              <BarChart data={Object.entries(byRoute).map(([route, count]) => ({ route, count }))}>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
+                <XAxis dataKey="route" stroke="#545c72" tick={{ fontSize: 10, fill: "#545c72" }} />
+                <YAxis stroke="#545c72" tick={{ fontSize: 11, fill: "#545c72" }} />
+                <Tooltip contentStyle={TOOLTIP_STYLE} />
+                <Bar dataKey="count" fill="#8b5cf6" radius={[6,6,0,0]} name="Pickups" />
               </BarChart>
             </ResponsiveContainer>
           </div>
         </div>
 
-        {/* Pickup table */}
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+        {/* Table */}
+        <div className="card overflow-hidden fade-up-3">
+          <div style={{
+            padding: "16px 20px", borderBottom: "1px solid var(--border)",
+            display: "flex", alignItems: "center", justifyContent: "space-between",
+          }}>
             <div>
-              <h2 className="font-semibold text-gray-900">Today's Schedule</h2>
-              <p className="text-xs text-gray-400 mt-0.5">{filtered.length} pickups</p>
+              <h2 style={{ fontSize: 14, fontWeight: 600, color: "var(--text-1)" }}>Today's Schedule</h2>
+              <p style={{ fontSize: 12, color: "var(--text-3)", marginTop: 2 }}>{filtered.length} pickups</p>
             </div>
-            {/* Filter buttons */}
-            <div className="flex gap-2">
+            <div style={{ display: "flex", gap: 6 }}>
               {(["all","planned","completed","missed"] as const).map(f => (
-                <button key={f} onClick={() => setFilter(f)}
-                  className={`text-xs px-3 py-1.5 rounded-lg font-medium capitalize transition-colors
-                    ${filter === f ? "bg-green-500 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}>
-                  {f}
-                </button>
+                <button key={f} onClick={() => setFilter(f)} style={{
+                  fontSize: 11, padding: "4px 10px", borderRadius: 8,
+                  background: filter === f ? "var(--bg-3)" : "transparent",
+                  border: `1px solid ${filter === f ? "var(--border-2)" : "var(--border)"}`,
+                  color: filter === f ? "var(--text-1)" : "var(--text-3)",
+                  cursor: "pointer", fontFamily: "'DM Sans', sans-serif",
+                  textTransform: "capitalize",
+                }}>{f}</button>
               ))}
             </div>
           </div>
 
-          {loading ? <LoadingSpinner /> : error ? <ErrorMessage message={error} /> : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
+          {loading ? <LoadingSpinner /> : error ? (
+            <div style={{ padding: 16 }}><ErrorMessage message={error} /></div>
+          ) : (
+            <div style={{ overflowX: "auto" }}>
+              <table style={{ width: "100%", borderCollapse: "collapse" }}>
                 <thead>
-                  <tr className="bg-gray-50 text-gray-500 text-xs uppercase">
-                    {["ID","Route","Scheduled At","Window","Bin ID","Priority","Status"].map(h => (
-                      <th key={h} className="px-5 py-3 text-left font-medium">{h}</th>
+                  <tr style={{ borderBottom: "1px solid var(--border)" }}>
+                    {["ID","Route","Time","Window","Bin","Priority","Status"].map(h => (
+                      <th key={h} style={{
+                        padding: "10px 16px", textAlign: "left",
+                        fontSize: 11, fontWeight: 500, color: "var(--text-3)",
+                        letterSpacing: "0.05em", textTransform: "uppercase",
+                        background: "rgba(255,255,255,0.02)",
+                      }}>{h}</th>
                     ))}
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-50">
+                <tbody>
                   {filtered.map(p => (
-                    <tr key={p.id} className="hover:bg-gray-50 transition-colors">
-                      <td className="px-5 py-3.5 font-mono text-gray-500 text-xs">SCH-{String(p.id).padStart(3,"0")}</td>
-                      <td className="px-5 py-3.5 font-medium text-blue-600">{p.route_id}</td>
-                      <td className="px-5 py-3.5 text-gray-600 text-xs">{new Date(p.scheduled_at).toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"})}</td>
-                      <td className="px-5 py-3.5 text-gray-500 text-xs">
-                        {new Date(p.window_start).toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"})} –{" "}
-                        {new Date(p.window_end).toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"})}
+                    <tr key={p.id} className="table-row">
+                      <td style={{ padding: "11px 16px" }}>
+                        <span className="mono" style={{ fontSize: 11, color: "var(--text-3)" }}>
+                          SCH-{String(p.id).padStart(3,"0")}
+                        </span>
                       </td>
-                      <td className="px-5 py-3.5 font-mono font-semibold text-green-600">{p.bin_id}</td>
-                      <td className="px-5 py-3.5"><StatusBadge status={p.priority} /></td>
-                      <td className="px-5 py-3.5"><StatusBadge status={p.status} /></td>
+                      <td style={{ padding: "11px 16px", fontSize: 13, fontWeight: 500, color: "#60a5fa" }}>
+                        {p.route_id}
+                      </td>
+                      <td style={{ padding: "11px 16px" }}>
+                        <span className="mono" style={{ fontSize: 12, color: "var(--text-2)" }}>
+                          {new Date(p.scheduled_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                        </span>
+                      </td>
+                      <td style={{ padding: "11px 16px" }}>
+                        <span className="mono" style={{ fontSize: 11, color: "var(--text-3)" }}>
+                          {new Date(p.window_start).toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"})}–
+                          {new Date(p.window_end).toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"})}
+                        </span>
+                      </td>
+                      <td style={{ padding: "11px 16px" }}>
+                        <span className="mono" style={{ fontSize: 13, fontWeight: 500, color: "#4ade80" }}>
+                          {p.bin_id}
+                        </span>
+                      </td>
+                      <td style={{ padding: "11px 16px" }}><StatusBadge status={p.priority} /></td>
+                      <td style={{ padding: "11px 16px" }}><StatusBadge status={p.status} /></td>
                     </tr>
                   ))}
                 </tbody>

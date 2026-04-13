@@ -15,45 +15,71 @@ export default function ForecastTable({ binId }: { binId: string }) {
   }, [binId]);
 
   if (loading) return <LoadingSpinner />;
-  if (error)   return <ErrorMessage message={error} />;
+  if (error)   return <div style={{ padding: 16 }}><ErrorMessage message={error} /></div>;
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-      <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+    <div className="card overflow-hidden">
+      <div style={{
+        padding: "16px 20px", borderBottom: "1px solid var(--border)",
+        display: "flex", alignItems: "center", justifyContent: "space-between",
+      }}>
         <div>
-          <h2 className="font-semibold text-gray-900">10-Day Forecast</h2>
-          <p className="text-xs text-gray-400 mt-0.5">
-            Model: {rows[0]?.model_version ?? "—"}
-            <span className="ml-2 text-yellow-500">⚠ placeholder outputs</span>
+          <h2 style={{ fontSize: 14, fontWeight: 600, color: "var(--text-1)" }}>10-Day Forecast</h2>
+          <p style={{ fontSize: 12, color: "var(--text-3)", marginTop: 2 }}>
+            {rows[0]?.model_version ?? "Prophet v1"} · powered by Mohsen's model
           </p>
         </div>
       </div>
-      <table className="w-full text-sm">
+      <table style={{ width: "100%", borderCollapse: "collapse" }}>
         <thead>
-          <tr className="bg-gray-50 text-gray-500 text-xs uppercase">
+          <tr style={{ borderBottom: "1px solid var(--border)" }}>
             {["Date","Predicted Fill","Predicted Weight","Recommended Pickup"].map(h => (
-              <th key={h} className="px-5 py-3 text-left font-medium">{h}</th>
+              <th key={h} style={{
+                padding: "10px 16px", textAlign: "left",
+                fontSize: 11, fontWeight: 500, color: "var(--text-3)",
+                letterSpacing: "0.05em", textTransform: "uppercase",
+                background: "rgba(255,255,255,0.02)",
+              }}>{h}</th>
             ))}
           </tr>
         </thead>
-        <tbody className="divide-y divide-gray-50">
-          {rows.map(r => (
-            <tr key={r.id} className="hover:bg-gray-50 transition-colors">
-              <td className="px-5 py-3.5 text-gray-700 font-medium">{r.forecast_date}</td>
-              <td className="px-5 py-3.5">
-                <div className="flex items-center gap-3">
-                  <div className="w-20 bg-gray-100 rounded-full h-2">
-                    <div className={`h-2 rounded-full
-                      ${r.predicted_fill_pct >= 80 ? "bg-red-500" : r.predicted_fill_pct >= 60 ? "bg-yellow-500" : "bg-green-500"}`}
-                      style={{ width: `${Math.min(r.predicted_fill_pct, 100)}%` }} />
+        <tbody>
+          {rows.map(r => {
+            const fillColor = r.predicted_fill_pct >= 80 ? "#ef4444"
+              : r.predicted_fill_pct >= 60 ? "#f59e0b" : "#22c55e";
+            return (
+              <tr key={r.id} className="table-row">
+                <td style={{ padding: "11px 16px" }}>
+                  <span className="mono" style={{ fontSize: 13, color: "var(--text-1)", fontWeight: 500 }}>
+                    {r.forecast_date}
+                  </span>
+                </td>
+                <td style={{ padding: "11px 16px" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                    <div style={{ width: 64, height: 5, borderRadius: 99, background: "var(--bg-3)", overflow: "hidden" }}>
+                      <div style={{
+                        width: `${Math.min(r.predicted_fill_pct, 100)}%`,
+                        height: "100%", borderRadius: 99, background: fillColor,
+                      }} />
+                    </div>
+                    <span style={{ fontSize: 12, fontWeight: 600, color: fillColor }}>
+                      {r.predicted_fill_pct.toFixed(1)}%
+                    </span>
                   </div>
-                  <span className="font-semibold text-gray-900">{r.predicted_fill_pct.toFixed(1)}%</span>
-                </div>
-              </td>
-              <td className="px-5 py-3.5 text-gray-600">{r.predicted_weight_kg.toFixed(2)} kg</td>
-              <td className="px-5 py-3.5 text-blue-600 font-medium">{r.recommended_pickup_date}</td>
-            </tr>
-          ))}
+                </td>
+                <td style={{ padding: "11px 16px" }}>
+                  <span className="mono" style={{ fontSize: 12, color: "var(--text-2)" }}>
+                    {r.predicted_weight_kg.toFixed(2)} kg
+                  </span>
+                </td>
+                <td style={{ padding: "11px 16px" }}>
+                  <span style={{ fontSize: 12, color: "#60a5fa", fontWeight: 500 }}>
+                    {r.recommended_pickup_date}
+                  </span>
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </div>

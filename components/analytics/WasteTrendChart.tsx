@@ -22,26 +22,36 @@ export default function WasteTrendChart() {
   }));
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="font-semibold text-gray-900">Waste Collected Trend</h2>
-        <span className="text-xs text-gray-400 bg-gray-100 px-3 py-1 rounded-full">BN-001 · 30 days</span>
+    <div className="card" style={{ padding: 20 }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
+        <div>
+          <h2 style={{ fontSize: 14, fontWeight: 600, color: "var(--text-1)" }}>Waste Collected Trend</h2>
+          <p style={{ fontSize: 12, color: "var(--text-3)", marginTop: 2 }}>30-day fill % average</p>
+        </div>
+        <span style={{
+          fontSize: 11, color: "var(--text-3)",
+          background: "var(--bg-3)", padding: "4px 10px",
+          borderRadius: 99, border: "1px solid var(--border)",
+        }}>BN-001 · 30 days</span>
       </div>
-      <ResponsiveContainer width="100%" height={260}>
+      <ResponsiveContainer width="100%" height={240}>
         <AreaChart data={data}>
           <defs>
             <linearGradient id="grad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%"  stopColor="#22c55e" stopOpacity={0.15} />
+              <stop offset="5%"  stopColor="#22c55e" stopOpacity={0.2} />
               <stop offset="95%" stopColor="#22c55e" stopOpacity={0} />
             </linearGradient>
           </defs>
-          <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-          <XAxis dataKey="day" stroke="#94a3b8" tick={{ fontSize: 11 }} />
-          <YAxis stroke="#94a3b8" tick={{ fontSize: 11 }} unit="%" />
+          <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
+          <XAxis dataKey="day" stroke="#545c72" tick={{ fontSize: 11, fill: "#545c72" }} />
+          <YAxis stroke="#545c72" tick={{ fontSize: 11, fill: "#545c72" }} unit="%" />
           <Tooltip
-            contentStyle={{ backgroundColor: "white", border: "1px solid #e2e8f0", borderRadius: 12, fontSize: 12 }} />
+            contentStyle={{
+              background: "#1e2535", border: "1px solid rgba(255,255,255,0.1)",
+              borderRadius: 10, fontSize: 12, color: "#f0f2f8",
+            }} />
           <Area type="monotone" dataKey="fill" stroke="#22c55e" fill="url(#grad)"
-            strokeWidth={2.5} dot={{ fill: "#22c55e", r: 3 }} name="Avg Fill %" />
+            strokeWidth={2} dot={false} name="Avg Fill %" />
         </AreaChart>
       </ResponsiveContainer>
     </div>

@@ -31,75 +31,121 @@ export default function BinStatusTable({ restaurantMode = false }: { restaurantM
       .finally(() => setLoading(false));
   }, [restaurantMode]);
 
-  if (loading) return <LoadingSpinner />;
-  if (error)   return <ErrorMessage message={error} />;
-
   const filtered = bins.filter(b =>
     b.id.toLowerCase().includes(search.toLowerCase()) ||
     b.location_name.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-      <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+    <div className="card overflow-hidden">
+      {/* Header */}
+      <div style={{
+        padding: "16px 20px",
+        borderBottom: "1px solid var(--border)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        gap: 12,
+      }}>
         <div>
-          <h2 className="font-semibold text-gray-900">
-            {restaurantMode ? "🍽 My Bins" : "Bin Status"}
+          <h2 style={{ fontSize: 14, fontWeight: 600, color: "var(--text-1)" }}>
+            {restaurantMode ? "My Bins" : "Bin Status"}
           </h2>
-          <p className="text-xs text-gray-400 mt-0.5">
-            {restaurantMode
-              ? `${filtered.length} bins assigned to your restaurant`
-              : "Click a row to view bin details"}
+          <p style={{ fontSize: 12, color: "var(--text-3)", marginTop: 2 }}>
+            {filtered.length} bins {restaurantMode ? "assigned" : "total"} · click row for details
           </p>
         </div>
-        <input value={search} onChange={e => setSearch(e.target.value)}
-          placeholder="Search bins..."
-          className="text-sm border border-gray-200 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-green-500 w-48" />
+        <input
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+          placeholder="Search..."
+          style={{
+            background: "var(--bg-3)",
+            border: "1px solid var(--border)",
+            borderRadius: 8,
+            padding: "6px 12px",
+            fontSize: 12,
+            color: "var(--text-1)",
+            outline: "none",
+            width: 160,
+          }}
+        />
       </div>
 
-      <div className="overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="bg-gray-50 text-gray-500 text-xs uppercase">
-              {["Bin ID","Location","Fill Level","Last Seen","Status"].map(h => (
-                <th key={h} className="px-5 py-3 text-left font-medium">{h}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-50">
-            {filtered.map(b => {
-              const t    = b.latest_telemetry;
-              const fill = t?.fill_pct ?? 0;
-              const fillStatus = fill >= 90 ? "critical" : fill >= 70 ? "warning" : "operational";
-              return (
-                <tr key={b.id} onClick={() => router.push(`/bins/${b.id}`)}
-                  className="hover:bg-gray-50 cursor-pointer transition-colors">
-                  <td className="px-5 py-3.5 font-mono font-semibold text-gray-900">{b.id}</td>
-                  <td className="px-5 py-3.5 text-gray-600">{b.location_name}</td>
-                  <td className="px-5 py-3.5">
-                    <div className="flex items-center gap-3">
-                      <div className="w-24 bg-gray-100 rounded-full h-2">
-                        <div className={`h-2 rounded-full transition-all
-                          ${fill >= 90 ? "bg-red-500" : fill >= 70 ? "bg-yellow-500" : "bg-green-500"}`}
-                          style={{ width: `${fill}%` }} />
+      {loading ? <LoadingSpinner /> : error ? (
+        <div style={{ padding: 16 }}><ErrorMessage message={error} /></div>
+      ) : (
+        <div style={{ overflowX: "auto" }}>
+          <table style={{ width: "100%", borderCollapse: "collapse" }}>
+            <thead>
+              <tr style={{ borderBottom: "1px solid var(--border)" }}>
+                {["Bin ID","Location","Fill Level","Weight","Last Reading","Status"].map(h => (
+                  <th key={h} style={{
+                    padding: "10px 16px",
+                    textAlign: "left",
+                    fontSize: 11,
+                    fontWeight: 500,
+                    color: "var(--text-3)",
+                    letterSpacing: "0.05em",
+                    textTransform: "uppercase",
+                    background: "rgba(255,255,255,0.02)",
+                  }}>{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {filtered.map(b => {
+                const t    = b.latest_telemetry;
+                const fill = t?.fill_pct ?? 0;
+                const fillColor = fill >= 90 ? "#ef4444" : fill >= 70 ? "#f59e0b" : "#22c55e";
+                const statusKey = fill >= 90 ? "critical" : fill >= 70 ? "warning" : "operational";
+                return (
+                  <tr key={b.id}
+                    onClick={() => router.push(`/bins/${b.id}`)}
+                    className="table-row"
+                    style={{ cursor: "pointer" }}>
+                    <td style={{ padding: "12px 16px" }}>
+                      <span className="mono" style={{ fontSize: 13, fontWeight: 500, color: "var(--text-1)" }}>
+                        {b.id}
+                      </span>
+                    </td>
+                    <td style={{ padding: "12px 16px", fontSize: 13, color: "var(--text-2)", maxWidth: 180 }}>
+                      {b.location_name}
+                    </td>
+                    <td style={{ padding: "12px 16px" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                        <div style={{
+                          width: 72, height: 5, borderRadius: 99,
+                          background: "var(--bg-3)", overflow: "hidden",
+                        }}>
+                          <div style={{
+                            width: `${fill}%`, height: "100%",
+                            borderRadius: 99, background: fillColor,
+                            transition: "width 0.6s ease",
+                          }} />
+                        </div>
+                        <span style={{ fontSize: 12, fontWeight: 600, color: fillColor, minWidth: 36 }}>
+                          {fill.toFixed(0)}%
+                        </span>
                       </div>
-                      <span className="font-semibold text-gray-900 w-10">{fill.toFixed(0)}%</span>
-                    </div>
-                  </td>
-                  <td className="px-5 py-3.5 text-gray-500 text-xs">
-                    {t?.ts ? new Date(t.ts).toLocaleString() : "—"}
-                  </td>
-                  <td className="px-5 py-3.5"><StatusBadge status={fillStatus} /></td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
-
-      {restaurantMode && (
-        <div className="px-6 py-3 bg-green-50 border-t border-green-100 text-xs text-green-700">
-          💡 Click any bin to view detailed telemetry and forecasts
+                    </td>
+                    <td style={{ padding: "12px 16px", fontSize: 12, color: "var(--text-2)" }} className="mono">
+                      {t?.weight_kg ? `${t.weight_kg.toFixed(1)} kg` : "—"}
+                    </td>
+                    <td style={{ padding: "12px 16px", fontSize: 11, color: "var(--text-3)" }}>
+                      {t?.ts ? new Date(t.ts).toLocaleString("en-US", {
+                        month: "short", day: "numeric",
+                        hour: "2-digit", minute: "2-digit",
+                      }) : "—"}
+                    </td>
+                    <td style={{ padding: "12px 16px" }}>
+                      <StatusBadge status={statusKey} />
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         </div>
       )}
     </div>

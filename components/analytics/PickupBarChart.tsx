@@ -12,22 +12,28 @@ export default function PickupBarChart() {
   useEffect(() => { api.pickupsToday().then(setPickups).finally(() => setLoading(false)); }, []);
   if (loading) return <LoadingSpinner />;
 
-  const planned   = pickups.filter(p => p.status === "planned").length;
-  const completed = pickups.filter(p => p.status === "completed").length;
-  const missed    = pickups.filter(p => p.status === "missed").length;
-
-  const data = [{ name: "Today", Planned: planned, Completed: completed, Missed: missed }];
+  const data = [{
+    name: "Today",
+    Planned:   pickups.filter(p => p.status === "planned").length,
+    Completed: pickups.filter(p => p.status === "completed").length,
+    Missed:    pickups.filter(p => p.status === "missed").length,
+  }];
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-      <h2 className="font-semibold text-gray-900 mb-6">Pickups: Planned vs Completed</h2>
-      <ResponsiveContainer width="100%" height={220}>
-        <BarChart data={data} barGap={6}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-          <XAxis dataKey="name" stroke="#94a3b8" tick={{ fontSize: 12 }} />
-          <YAxis stroke="#94a3b8" tick={{ fontSize: 12 }} />
-          <Tooltip contentStyle={{ borderRadius: 12, fontSize: 12, border: "1px solid #e2e8f0" }} />
-          <Legend />
+    <div className="card" style={{ padding: 20 }}>
+      <h2 style={{ fontSize: 14, fontWeight: 600, color: "var(--text-1)", marginBottom: 20 }}>
+        Pickups by Status
+      </h2>
+      <ResponsiveContainer width="100%" height={200}>
+        <BarChart data={data} barGap={4}>
+          <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
+          <XAxis dataKey="name" stroke="#545c72" tick={{ fontSize: 11, fill: "#545c72" }} />
+          <YAxis stroke="#545c72" tick={{ fontSize: 11, fill: "#545c72" }} />
+          <Tooltip contentStyle={{
+            background: "#1e2535", border: "1px solid rgba(255,255,255,0.1)",
+            borderRadius: 10, fontSize: 12, color: "#f0f2f8",
+          }} />
+          <Legend wrapperStyle={{ fontSize: 12, color: "#8b92a8" }} />
           <Bar dataKey="Planned"   fill="#3b82f6" radius={[6,6,0,0]} />
           <Bar dataKey="Completed" fill="#22c55e" radius={[6,6,0,0]} />
           <Bar dataKey="Missed"    fill="#ef4444" radius={[6,6,0,0]} />
