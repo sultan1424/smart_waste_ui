@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { getAuth } from "@/lib/auth";
 import type { AuthUser } from "@/lib/auth";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
@@ -11,35 +11,43 @@ interface Props {
 }
 
 export default function AuthGuard({ children, allowedRoles }: Props) {
-  const router = useRouter();
+  const router   = useRouter();
+  const pathname = usePathname();
   const [user, setUser] = useState<AuthUser | null | "loading">("loading");
 
   useEffect(() => {
+    // Small delay to ensure localStorage is available (hydration)
     const auth = getAuth();
-    if (!auth) {
+
+    if (!auth || !auth.token) {
+      // No token — clear any stale state and redirect
+      localStorage.removeItem("sw_auth");
       router.replace("/login");
       return;
     }
+
     if (allowedRoles && !allowedRoles.includes(auth.role)) {
-      setUser(auth);  // show not-authorized message
+      setUser(auth);
       return;
     }
+
     setUser(auth);
-  }, []);
+  }, [pathname]);
 
   if (user === "loading") return <LoadingSpinner label="Checking auth..." />;
-  if (!user)              return null;
+  if (!user) return null;
 
   if (allowedRoles && !allowedRoles.includes((user as AuthUser).role)) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="text-center">
-          <div className="text-4xl mb-4">🔒</div>
-          <h2 className="text-xl font-bold text-gray-900 mb-2">Not Authorized</h2>
-          <p className="text-gray-500 text-sm">
-            Your role <strong>{(user as AuthUser).role}</strong> doesn't have access to this page.
-          </p>
-        </div>
+      <div style={{
+        display: "flex", alignItems: "center", justifyContent: "center",
+        minHeight: "60vh", flexDirection: "column", gap: 12,
+      }}>
+        <div style={{ fontSize: 32 }}>🔒</div>
+        <h2 style={{ fontSize: 18, fontWeight: 600, color: "var(--text-1)" }}>Not Authorized</h2>
+        <p style={{ fontSize: 13, color: "var(--text-3)" }}>
+          Your role <strong style={{ color: "var(--text-2)" }}>{(user as AuthUser).role}</strong> cannot access this page.
+        </p>
       </div>
     );
   }
