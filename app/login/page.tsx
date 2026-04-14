@@ -1,7 +1,7 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { login, setAuth } from "@/lib/auth";
+import { login, setAuth, getAuth } from "@/lib/auth";
 
 const DEMO = [
   { role: "restaurant", label: "Restaurant", color: "#22c55e" },
@@ -16,6 +16,14 @@ export default function LoginPage() {
   const [error,    setError]    = useState("");
   const [loading,  setLoading]  = useState(false);
 
+  // If already logged in, redirect to home
+  useEffect(() => {
+    const auth = getAuth();
+    if (auth?.token) {
+      router.replace("/");
+    }
+  }, []);
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -23,10 +31,12 @@ export default function LoginPage() {
     try {
       const user = await login(email, password);
       setAuth(user);
-      router.replace("/");
+      // Small delay to ensure localStorage is written before redirect
+      setTimeout(() => {
+        router.replace("/");
+      }, 100);
     } catch (err: any) {
       setError(err.message ?? "Login failed");
-    } finally {
       setLoading(false);
     }
   };
