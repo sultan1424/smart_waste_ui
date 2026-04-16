@@ -49,7 +49,8 @@ export default function TopBar() {
     router.replace("/login");
   };
 
-  const role = (user?.role ?? "regulator") as keyof typeof roleConfig;
+  const role = user?.role as keyof typeof roleConfig;
+    if (!user || !role) return null;
   const cfg  = roleConfig[role];
   const links = navLinks[role] ?? [];
 
