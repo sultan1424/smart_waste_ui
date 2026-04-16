@@ -1,6 +1,5 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { getAuth } from "@/lib/auth";
 import type { AuthUser } from "@/lib/auth";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
@@ -11,34 +10,24 @@ interface Props {
 }
 
 export default function AuthGuard({ children, allowedRoles }: Props) {
-  const router = useRouter();
-  const [status, setStatus] = useState<"loading" | "ok" | "unauthorized">("loading");
-  const [user, setUser] = useState<AuthUser | null>(null);
+  const [ready, setReady]  = useState(false);
+  const [user,  setUser]   = useState<AuthUser | null>(null);
 
   useEffect(() => {
-    // Must run client-side only
-    if (typeof window === "undefined") return;
-
     const auth = getAuth();
-
-    if (!auth || !auth.token) {
-      window.location.href = "/login";
-      return;
-    }
-
-    if (allowedRoles && !allowedRoles.includes(auth.role)) {
-      setUser(auth);
-      setStatus("unauthorized");
-      return;
-    }
-
     setUser(auth);
-    setStatus("ok");
+    setReady(true);
   }, []);
 
-  if (status === "loading") return <LoadingSpinner label="Loading..." />;
+  if (!ready) return <LoadingSpinner label="Loading..." />;
 
-  if (status === "unauthorized") {
+  // Middleware already ensures we're logged in, but double-check
+  if (!user) {
+    window.location.replace("/login");
+    return null;
+  }
+
+  if (allowedRoles && !allowedRoles.includes(user.role)) {
     return (
       <div style={{
         display: "flex", alignItems: "center", justifyContent: "center",
@@ -47,13 +36,11 @@ export default function AuthGuard({ children, allowedRoles }: Props) {
         <div style={{ fontSize: 32 }}>🔒</div>
         <h2 style={{ fontSize: 18, fontWeight: 600, color: "var(--text-1)" }}>Not Authorized</h2>
         <p style={{ fontSize: 13, color: "var(--text-3)" }}>
-          Your role <strong style={{ color: "var(--text-2)" }}>{user?.role}</strong> cannot access this page.
+          Your role <strong style={{ color: "var(--text-2)" }}>{user.role}</strong> cannot access this page.
         </p>
       </div>
     );
   }
 
-  if (status === "ok") return <>{children}</>;
-
-  return null;
+  return <>{children}</>;
 }

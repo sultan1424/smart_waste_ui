@@ -8,21 +8,21 @@ export interface AuthUser {
 
 export function getAuth(): AuthUser | null {
   if (typeof window === "undefined") return null;
-  const raw = localStorage.getItem("sw_auth");
-  if (!raw) return null;
-  try { return JSON.parse(raw); } catch { return null; }
+  try {
+    const raw = localStorage.getItem("sw_auth");
+    return raw ? JSON.parse(raw) : null;
+  } catch { return null; }
 }
 
 export function setAuth(user: AuthUser) {
   localStorage.setItem("sw_auth", JSON.stringify(user));
-  // Also set a cookie so middleware can read it
-  document.cookie = `sw_auth=1; path=/; max-age=86400; SameSite=Lax`;
+  // Set cookie for middleware (no token in cookie for security)
+  document.cookie = "sw_auth=1; path=/; max-age=3600; SameSite=Lax";
 }
 
 export function clearAuth() {
   localStorage.removeItem("sw_auth");
-  // Clear the cookie too
-  document.cookie = `sw_auth=; path=/; max-age=0`;
+  document.cookie = "sw_auth=; path=/; max-age=0";
 }
 
 export async function login(email: string, password: string): Promise<AuthUser> {

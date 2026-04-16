@@ -20,35 +20,23 @@ export default function LoginPage() {
     setError("");
     try {
       const user = await login(email, password);
-      setAuth(user);
-      // Hard redirect — middleware will allow through since cookie is now set
-      window.location.href = "/";
+      setAuth(user); // sets localStorage + cookie
+      window.location.replace("/"); // hard redirect, no router
     } catch (err: any) {
       setError(err.message ?? "Login failed");
       setLoading(false);
     }
   };
 
-  const fillDemo = (role: string) => {
-    setEmail(`${role}_user@test.com`);
-    setPassword("password");
-    setError("");
-  };
-
   return (
     <div style={{
-      minHeight: "100vh",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      padding: 24,
-      background: "var(--bg)",
+      minHeight: "100vh", display: "flex",
+      alignItems: "center", justifyContent: "center",
+      padding: 24, background: "var(--bg)",
     }}>
       <div style={{
-        position: "fixed",
-        top: "20%", left: "50%",
-        transform: "translateX(-50%)",
-        width: 600, height: 300,
+        position: "fixed", top: "20%", left: "50%",
+        transform: "translateX(-50%)", width: 600, height: 300,
         background: "radial-gradient(ellipse, rgba(34,197,94,0.06) 0%, transparent 70%)",
         pointerEvents: "none",
       }} />
@@ -58,10 +46,9 @@ export default function LoginPage() {
           <div style={{
             width: 48, height: 48,
             background: "linear-gradient(135deg, #22c55e, #16a34a)",
-            borderRadius: 14,
-            display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: 20, fontWeight: 700, color: "white",
-            margin: "0 auto 16px",
+            borderRadius: 14, display: "flex", alignItems: "center",
+            justifyContent: "center", fontSize: 20, fontWeight: 700,
+            color: "white", margin: "0 auto 16px",
             boxShadow: "0 0 32px rgba(34,197,94,0.25)",
           }}>W</div>
           <h1 style={{ fontSize: 22, fontWeight: 600, color: "var(--text-1)", marginBottom: 6 }}>
@@ -73,11 +60,8 @@ export default function LoginPage() {
         </div>
 
         <div style={{
-          background: "var(--bg-2)",
-          border: "1px solid var(--border)",
-          borderRadius: 20,
-          padding: 28,
-          boxShadow: "var(--shadow-lg)",
+          background: "var(--bg-2)", border: "1px solid var(--border)",
+          borderRadius: 20, padding: 28, boxShadow: "var(--shadow-lg)",
         }}>
           <form onSubmit={handleLogin}>
             <div style={{ marginBottom: 16 }}>
@@ -85,8 +69,7 @@ export default function LoginPage() {
                 Email address
               </label>
               <input type="email" value={email} onChange={e => setEmail(e.target.value)}
-                required placeholder="you@example.com"
-                style={{
+                required placeholder="you@example.com" style={{
                   width: "100%", background: "var(--bg-3)",
                   border: "1px solid var(--border)", borderRadius: 10,
                   padding: "10px 14px", fontSize: 14, color: "var(--text-1)", outline: "none",
@@ -100,8 +83,7 @@ export default function LoginPage() {
                 Password
               </label>
               <input type="password" value={password} onChange={e => setPassword(e.target.value)}
-                required placeholder="••••••••"
-                style={{
+                required placeholder="••••••••" style={{
                   width: "100%", background: "var(--bg-3)",
                   border: "1px solid var(--border)", borderRadius: 10,
                   padding: "10px 14px", fontSize: 14, color: "var(--text-1)", outline: "none",
@@ -113,7 +95,8 @@ export default function LoginPage() {
             {error && (
               <div style={{
                 background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.2)",
-                borderRadius: 10, padding: "10px 14px", fontSize: 13, color: "#f87171", marginBottom: 16,
+                borderRadius: 10, padding: "10px 14px", fontSize: 13,
+                color: "#f87171", marginBottom: 16,
               }}>{error}</div>
             )}
 
@@ -137,14 +120,15 @@ export default function LoginPage() {
             </p>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }}>
               {DEMO.map(d => (
-                <button key={d.role} onClick={() => fillDemo(d.role)} style={{
-                  background: "var(--bg-3)", border: "1px solid var(--border)",
-                  borderRadius: 8, padding: "7px 0", fontSize: 12,
-                  color: d.color, fontWeight: 500, cursor: "pointer",
-                  fontFamily: "'DM Sans', sans-serif",
-                }}
-                onMouseEnter={e => (e.currentTarget.style.borderColor = d.color + "40")}
-                onMouseLeave={e => (e.currentTarget.style.borderColor = "var(--border)")}>
+                <button key={d.role} onClick={() => { setEmail(`${d.role}_user@test.com`); setPassword("password"); setError(""); }}
+                  style={{
+                    background: "var(--bg-3)", border: "1px solid var(--border)",
+                    borderRadius: 8, padding: "7px 0", fontSize: 12,
+                    color: d.color, fontWeight: 500, cursor: "pointer",
+                    fontFamily: "'DM Sans', sans-serif",
+                  }}
+                  onMouseEnter={e => (e.currentTarget.style.borderColor = d.color + "40")}
+                  onMouseLeave={e => (e.currentTarget.style.borderColor = "var(--border)")}>
                   {d.label}
                 </button>
               ))}
