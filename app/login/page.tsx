@@ -1,6 +1,5 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { login, setAuth, getAuth } from "@/lib/auth";
 
 const DEMO = [
@@ -10,17 +9,20 @@ const DEMO = [
 ];
 
 export default function LoginPage() {
-  const router = useRouter();
   const [email,    setEmail]    = useState("");
   const [password, setPassword] = useState("");
   const [error,    setError]    = useState("");
   const [loading,  setLoading]  = useState(false);
+  const [checking, setChecking] = useState(true);
 
-  // If already logged in, redirect to home
+  // Check if already logged in
   useEffect(() => {
+    if (typeof window === "undefined") return;
     const auth = getAuth();
     if (auth?.token) {
-      router.replace("/");
+      window.location.href = "/";
+    } else {
+      setChecking(false);
     }
   }, []);
 
@@ -31,7 +33,6 @@ export default function LoginPage() {
     try {
       const user = await login(email, password);
       setAuth(user);
-      // Small delay to ensure localStorage is written before redirect
       window.location.href = "/";
     } catch (err: any) {
       setError(err.message ?? "Login failed");
@@ -44,6 +45,9 @@ export default function LoginPage() {
     setPassword("password");
     setError("");
   };
+
+  // Show nothing while checking auth to prevent flash
+  if (checking) return null;
 
   return (
     <div style={{
@@ -172,7 +176,6 @@ export default function LoginPage() {
                 fontWeight: 500,
                 color: loading ? "var(--text-3)" : "white",
                 cursor: loading ? "not-allowed" : "pointer",
-                transition: "opacity 0.15s",
                 fontFamily: "'DM Sans', sans-serif",
                 boxShadow: loading ? "none" : "0 0 20px rgba(34,197,94,0.2)",
               }}>
@@ -199,7 +202,6 @@ export default function LoginPage() {
                     color: d.color,
                     fontWeight: 500,
                     cursor: "pointer",
-                    transition: "all 0.15s",
                     fontFamily: "'DM Sans', sans-serif",
                   }}
                   onMouseEnter={e => (e.currentTarget.style.borderColor = d.color + "40")}

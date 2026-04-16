@@ -16,10 +16,13 @@ export default function AuthGuard({ children, allowedRoles }: Props) {
   const [user, setUser] = useState<AuthUser | null>(null);
 
   useEffect(() => {
+    // Must run client-side only
+    if (typeof window === "undefined") return;
+
     const auth = getAuth();
 
     if (!auth || !auth.token) {
-      router.replace("/login");
+      window.location.href = "/login";
       return;
     }
 
