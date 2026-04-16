@@ -15,10 +15,14 @@ export function getAuth(): AuthUser | null {
 
 export function setAuth(user: AuthUser) {
   localStorage.setItem("sw_auth", JSON.stringify(user));
+  // Also set a cookie so middleware can read it
+  document.cookie = `sw_auth=1; path=/; max-age=86400; SameSite=Lax`;
 }
 
 export function clearAuth() {
   localStorage.removeItem("sw_auth");
+  // Clear the cookie too
+  document.cookie = `sw_auth=; path=/; max-age=0`;
 }
 
 export async function login(email: string, password: string): Promise<AuthUser> {
