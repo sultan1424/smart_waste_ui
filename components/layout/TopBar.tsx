@@ -13,16 +13,16 @@ const roleConfig = {
 
 const navLinks = {
   restaurant: [
-    { href: "/",       label: "My Bins" },
+    { href: "/dashboard", label: "My Bins" },
   ],
   collector: [
-    { href: "/",          label: "Bins" },
+    { href: "/dashboard", label: "Bins" },
     { href: "/pickups",   label: "Pickups" },
     { href: "/route",     label: "Route Optimizer" },
     { href: "/collector-analytics", label: "Analytics" },
   ],
   regulator: [
-    { href: "/",          label: "Overview" },
+    { href: "/dashboard", label: "Overview" },
     { href: "/analytics", label: "Analytics" },
   ],
 };

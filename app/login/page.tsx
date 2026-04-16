@@ -21,7 +21,7 @@ export default function LoginPage() {
     try {
       const user = await login(email, password);
       setAuth(user); // sets localStorage + cookie
-      window.location.replace("/"); // hard redirect, no router
+      window.location.replace("/dashboard"); // hard redirect, no router
     } catch (err: any) {
       setError(err.message ?? "Login failed");
       setLoading(false);

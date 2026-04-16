@@ -17,7 +17,7 @@ export function getAuth(): AuthUser | null {
 export function setAuth(user: AuthUser) {
   localStorage.setItem("sw_auth", JSON.stringify(user));
   // Set cookie for middleware (no token in cookie for security)
-  document.cookie = "sw_auth=1; path=/; max-age=3600; SameSite=Lax";
+  document.cookie = "sw_auth=1; path=/; max-age=86400; SameSite=Lax";
 }
 
 export function clearAuth() {
