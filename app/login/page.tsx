@@ -32,9 +32,7 @@ export default function LoginPage() {
       const user = await login(email, password);
       setAuth(user);
       // Small delay to ensure localStorage is written before redirect
-      setTimeout(() => {
-        router.replace("/");
-      }, 100);
+      window.location.href = "/";
     } catch (err: any) {
       setError(err.message ?? "Login failed");
       setLoading(false);
