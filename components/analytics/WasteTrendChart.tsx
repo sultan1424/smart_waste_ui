@@ -22,36 +22,39 @@ export default function WasteTrendChart() {
   }));
 
   return (
-    <div className="card" style={{ padding: 20 }}>
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
+    <div className="card" style={{ padding: 24 }}>
+      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 24 }}>
         <div>
-          <h2 style={{ fontSize: 14, fontWeight: 600, color: "var(--text-1)" }}>Waste Collected Trend</h2>
-          <p style={{ fontSize: 12, color: "var(--text-3)", marginTop: 2 }}>30-day fill % average</p>
+          <h2 style={{ fontSize: 15, fontWeight: 600, color: "var(--text-1)" }}>Waste Collection Trend</h2>
+          <p style={{ fontSize: 12, color: "var(--text-3)", marginTop: 4 }}>30-day average fill level</p>
         </div>
         <span style={{
-          fontSize: 11, color: "var(--text-3)",
-          background: "var(--bg-3)", padding: "4px 10px",
+          fontSize: 11, fontWeight: 500, color: "var(--text-3)",
+          background: "var(--bg-3)", padding: "5px 12px",
           borderRadius: 99, border: "1px solid var(--border)",
         }}>BN-001 · 30 days</span>
       </div>
       <ResponsiveContainer width="100%" height={240}>
         <AreaChart data={data}>
           <defs>
-            <linearGradient id="grad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%"  stopColor="#22c55e" stopOpacity={0.2} />
-              <stop offset="95%" stopColor="#22c55e" stopOpacity={0} />
+            <linearGradient id="fillGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%"  stopColor="#3b5bdb" stopOpacity={0.15} />
+              <stop offset="95%" stopColor="#3b5bdb" stopOpacity={0} />
             </linearGradient>
           </defs>
-          <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
-          <XAxis dataKey="day" stroke="#545c72" tick={{ fontSize: 11, fill: "#545c72" }} />
-          <YAxis stroke="#545c72" tick={{ fontSize: 11, fill: "#545c72" }} unit="%" />
+          <CartesianGrid strokeDasharray="3 3" stroke="#e8eaf2" vertical={false} />
+          <XAxis dataKey="day" stroke="#9499b0" tick={{ fontSize: 11, fill: "#9499b0" }} axisLine={false} tickLine={false} />
+          <YAxis stroke="#9499b0" tick={{ fontSize: 11, fill: "#9499b0" }} axisLine={false} tickLine={false} unit="%" />
           <Tooltip
             contentStyle={{
-              background: "#1e2535", border: "1px solid rgba(255,255,255,0.1)",
-              borderRadius: 10, fontSize: 12, color: "#f0f2f8",
-            }} />
-          <Area type="monotone" dataKey="fill" stroke="#22c55e" fill="url(#grad)"
-            strokeWidth={2} dot={false} name="Avg Fill %" />
+              background: "#ffffff", border: "1px solid #e8eaf2",
+              borderRadius: 10, fontSize: 12, color: "#0f1628",
+              boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
+            }}
+            cursor={{ stroke: "#3b5bdb", strokeWidth: 1, strokeDasharray: "4 4" }}
+          />
+          <Area type="monotone" dataKey="fill" stroke="#3b5bdb" fill="url(#fillGrad)"
+            strokeWidth={2.5} dot={false} name="Avg Fill %" />
         </AreaChart>
       </ResponsiveContainer>
     </div>
