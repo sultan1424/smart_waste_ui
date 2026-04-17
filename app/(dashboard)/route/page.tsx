@@ -275,6 +275,31 @@ export default function RouteOptimizerPage() {
                 </span>
               ))}
             </div>
+            
+            {/* Google Maps button */}
+            <div style={{ display: "flex", justifyContent: "flex-end" }}>
+              <button
+                onClick={() => {
+                  const stops = result.route.filter(n => !n.is_depot);
+                  const origin = `${result.route[0].lat},${result.route[0].lng}`;
+                  const destination = origin;
+                  const waypoints = stops.map(n => `${n.lat},${n.lng}`).join("|");
+                  const url = `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${destination}&waypoints=${waypoints}&travelmode=driving`;
+                  window.open(url, "_blank");
+                }}
+                style={{
+                  background: "#4285F4",
+                  border: "none", borderRadius: 10,
+                  padding: "9px 18px",
+                  fontSize: 13, fontWeight: 500,
+                  color: "white", cursor: "pointer",
+                  fontFamily: "'DM Sans', sans-serif",
+                  display: "flex", alignItems: "center", gap: 8,
+                }}
+              >
+                🗺️ Open in Google Maps
+              </button>
+            </div>
 
             {/* Route sequence */}
             <div className="card" style={{ padding: "14px 20px" }}>
