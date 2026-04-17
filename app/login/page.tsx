@@ -3,9 +3,9 @@ import { useState } from "react";
 import { login, setAuth } from "@/lib/auth";
 
 const DEMO = [
-  { role: "restaurant", label: "Restaurant", color: "#22c55e" },
-  { role: "collector",  label: "Collector",  color: "#3b82f6" },
-  { role: "regulator",  label: "Regulator",  color: "#8b5cf6" },
+  { role:"restaurant", label:"Restaurant", color:"#16a34a", bg:"#dcfce7" },
+  { role:"collector",  label:"Collector",  color:"#3b5bdb", bg:"#eef2ff" },
+  { role:"regulator",  label:"Regulator",  color:"#6741d9", bg:"#ede9fe" },
 ];
 
 export default function LoginPage() {
@@ -20,8 +20,8 @@ export default function LoginPage() {
     setError("");
     try {
       const user = await login(email, password);
-      setAuth(user); // sets localStorage + cookie
-      window.location.replace("/dashboard"); // hard redirect, no router
+      setAuth(user);
+      window.location.replace("/dashboard");
     } catch (err: any) {
       setError(err.message ?? "Login failed");
       setLoading(false);
@@ -30,115 +30,110 @@ export default function LoginPage() {
 
   return (
     <div style={{
-      minHeight: "100vh", display: "flex",
-      alignItems: "center", justifyContent: "center",
-      padding: 24, background: "var(--bg)",
+      minHeight:"100vh", display:"flex",
+      alignItems:"center", justifyContent:"center",
+      padding:24, background:"var(--bg)",
     }}>
-      <div style={{
-        position: "fixed", top: "20%", left: "50%",
-        transform: "translateX(-50%)", width: 600, height: 300,
-        background: "radial-gradient(ellipse, rgba(34,197,94,0.06) 0%, transparent 70%)",
-        pointerEvents: "none",
-      }} />
+      <div style={{ width:"100%", maxWidth:420 }} className="fade-up">
 
-      <div style={{ width: "100%", maxWidth: 400 }} className="fade-up">
-        <div style={{ textAlign: "center", marginBottom: 32 }}>
+        {/* Logo */}
+        <div style={{ textAlign:"center", marginBottom:32 }}>
           <div style={{
-            width: 48, height: 48,
-            background: "linear-gradient(135deg, #22c55e, #16a34a)",
-            borderRadius: 14, display: "flex", alignItems: "center",
-            justifyContent: "center", fontSize: 20, fontWeight: 700,
-            color: "white", margin: "0 auto 16px",
-            boxShadow: "0 0 32px rgba(34,197,94,0.25)",
+            width:52, height:52,
+            background:"linear-gradient(135deg, #3b5bdb, #6741d9)",
+            borderRadius:16, display:"flex", alignItems:"center",
+            justifyContent:"center", fontSize:22, fontWeight:700,
+            color:"white", margin:"0 auto 16px",
+            boxShadow:"0 4px 20px rgba(59,91,219,0.25)",
           }}>W</div>
-          <h1 style={{ fontSize: 22, fontWeight: 600, color: "var(--text-1)", marginBottom: 6 }}>
+          <h1 style={{ fontSize:24, fontWeight:700, color:"var(--text-1)", marginBottom:6, letterSpacing:"-0.3px" }}>
             WasteEnergy
           </h1>
-          <p style={{ fontSize: 13, color: "var(--text-3)" }}>
-            Sign in to your operations dashboard
-          </p>
+          <p style={{ fontSize:13, color:"var(--text-3)" }}>Sign in to your operations dashboard</p>
         </div>
 
+        {/* Card */}
         <div style={{
-          background: "var(--bg-2)", border: "1px solid var(--border)",
-          borderRadius: 20, padding: 28, boxShadow: "var(--shadow-lg)",
+          background:"var(--bg-2)", border:"1px solid var(--border)",
+          borderRadius:20, padding:32, boxShadow:"var(--shadow-lg)",
         }}>
           <form onSubmit={handleLogin}>
-            <div style={{ marginBottom: 16 }}>
-              <label style={{ display: "block", fontSize: 12, fontWeight: 500, color: "var(--text-2)", marginBottom: 6 }}>
+            <div style={{ marginBottom:18 }}>
+              <label style={{ display:"block", fontSize:13, fontWeight:500, color:"var(--text-2)", marginBottom:7 }}>
                 Email address
               </label>
-              <input type="email" value={email} onChange={e => setEmail(e.target.value)}
+              <input type="email" value={email} onChange={e=>setEmail(e.target.value)}
                 required placeholder="you@example.com" style={{
-                  width: "100%", background: "var(--bg-3)",
-                  border: "1px solid var(--border)", borderRadius: 10,
-                  padding: "10px 14px", fontSize: 14, color: "var(--text-1)", outline: "none",
+                  width:"100%", background:"var(--bg-3)",
+                  border:"1.5px solid var(--border)", borderRadius:10,
+                  padding:"11px 14px", fontSize:14, color:"var(--text-1)",
+                  outline:"none", fontFamily:"inherit", transition:"border-color 0.15s",
                 }}
-                onFocus={e => (e.target.style.borderColor = "rgba(34,197,94,0.5)")}
-                onBlur={e  => (e.target.style.borderColor = "var(--border)")} />
+                onFocus={e=>(e.target.style.borderColor="#3b5bdb")}
+                onBlur={e=>(e.target.style.borderColor="var(--border)")} />
             </div>
 
-            <div style={{ marginBottom: 20 }}>
-              <label style={{ display: "block", fontSize: 12, fontWeight: 500, color: "var(--text-2)", marginBottom: 6 }}>
+            <div style={{ marginBottom:22 }}>
+              <label style={{ display:"block", fontSize:13, fontWeight:500, color:"var(--text-2)", marginBottom:7 }}>
                 Password
               </label>
-              <input type="password" value={password} onChange={e => setPassword(e.target.value)}
+              <input type="password" value={password} onChange={e=>setPassword(e.target.value)}
                 required placeholder="••••••••" style={{
-                  width: "100%", background: "var(--bg-3)",
-                  border: "1px solid var(--border)", borderRadius: 10,
-                  padding: "10px 14px", fontSize: 14, color: "var(--text-1)", outline: "none",
+                  width:"100%", background:"var(--bg-3)",
+                  border:"1.5px solid var(--border)", borderRadius:10,
+                  padding:"11px 14px", fontSize:14, color:"var(--text-1)",
+                  outline:"none", fontFamily:"inherit", transition:"border-color 0.15s",
                 }}
-                onFocus={e => (e.target.style.borderColor = "rgba(34,197,94,0.5)")}
-                onBlur={e  => (e.target.style.borderColor = "var(--border)")} />
+                onFocus={e=>(e.target.style.borderColor="#3b5bdb")}
+                onBlur={e=>(e.target.style.borderColor="var(--border)")} />
             </div>
 
             {error && (
               <div style={{
-                background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.2)",
-                borderRadius: 10, padding: "10px 14px", fontSize: 13,
-                color: "#f87171", marginBottom: 16,
+                background:"#fee2e2", border:"1px solid #fca5a5",
+                borderRadius:10, padding:"10px 14px", fontSize:13,
+                color:"#dc2626", marginBottom:18,
               }}>{error}</div>
             )}
 
             <button type="submit" disabled={loading} style={{
-              width: "100%",
-              background: loading ? "var(--bg-3)" : "linear-gradient(135deg, #22c55e, #16a34a)",
-              border: "none", borderRadius: 10, padding: "11px",
-              fontSize: 14, fontWeight: 500,
-              color: loading ? "var(--text-3)" : "white",
-              cursor: loading ? "not-allowed" : "pointer",
-              fontFamily: "'DM Sans', sans-serif",
-              boxShadow: loading ? "none" : "0 0 20px rgba(34,197,94,0.2)",
+              width:"100%",
+              background: loading?"var(--bg-3)":"#3b5bdb",
+              border:"none", borderRadius:10, padding:"12px",
+              fontSize:14, fontWeight:600,
+              color: loading?"var(--text-3)":"white",
+              cursor: loading?"not-allowed":"pointer",
+              fontFamily:"inherit",
+              boxShadow: loading?"none":"0 2px 8px rgba(59,91,219,0.3)",
+              transition:"all 0.15s",
             }}>
               {loading ? "Signing in..." : "Sign In"}
             </button>
           </form>
 
-          <div style={{ marginTop: 24, paddingTop: 20, borderTop: "1px solid var(--border)" }}>
-            <p style={{ fontSize: 11, color: "var(--text-3)", textAlign: "center", marginBottom: 10 }}>
+          {/* Demo accounts */}
+          <div style={{ marginTop:24, paddingTop:20, borderTop:"1px solid var(--border)" }}>
+            <p style={{ fontSize:12, color:"var(--text-3)", textAlign:"center", marginBottom:12 }}>
               Demo accounts — click to fill
             </p>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }}>
-              {DEMO.map(d => (
-                <button key={d.role} onClick={() => { setEmail(`${d.role}_user@test.com`); setPassword("password"); setError(""); }}
+            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:8 }}>
+              {DEMO.map(d=>(
+                <button key={d.role}
+                  onClick={()=>{ setEmail(`${d.role}_user@test.com`); setPassword("password"); setError(""); }}
                   style={{
-                    background: "var(--bg-3)", border: "1px solid var(--border)",
-                    borderRadius: 8, padding: "7px 0", fontSize: 12,
-                    color: d.color, fontWeight: 500, cursor: "pointer",
-                    fontFamily: "'DM Sans', sans-serif",
+                    background:d.bg, border:"none",
+                    borderRadius:8, padding:"8px 0", fontSize:12, fontWeight:600,
+                    color:d.color, cursor:"pointer", fontFamily:"inherit",
+                    transition:"opacity 0.15s",
                   }}
-                  onMouseEnter={e => (e.currentTarget.style.borderColor = d.color + "40")}
-                  onMouseLeave={e => (e.currentTarget.style.borderColor = "var(--border)")}>
+                  onMouseEnter={e=>(e.currentTarget.style.opacity="0.8")}
+                  onMouseLeave={e=>(e.currentTarget.style.opacity="1")}>
                   {d.label}
                 </button>
               ))}
             </div>
           </div>
         </div>
-
-        <p style={{ textAlign: "center", fontSize: 11, color: "var(--text-3)", marginTop: 20 }}>
-          JWT stored in localStorage · prototype only
-        </p>
       </div>
     </div>
   );
