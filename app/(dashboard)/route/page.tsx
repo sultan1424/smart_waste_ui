@@ -70,17 +70,22 @@ export default function RouteOptimizerPage() {
     setLoading(true); setError(""); setResult(null);
     try {
       const auth = JSON.parse(localStorage.getItem("sw_auth") ?? "{}");
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 60000);
+
       const res = await fetch(`${BASE}/api/v1/routes/optimize`, {
         method: "POST",
         headers: { "Content-Type": "application/json", "Authorization": `Bearer ${auth.token}` },
         body: JSON.stringify({ use_ortools: useOrTools, solver_time_limit: 30, fill_threshold: 60 }),
+        signal: controller.signal,
       });
+      clearTimeout(timeout);
+
       if (!res.ok) { const d = await res.json().catch(() => ({})); throw new Error(d.detail ?? `Error ${res.status}`); }
       setResult(await res.json());
     } catch (e: any) { setError(e.message); }
     finally { setLoading(false); }
   };
-
   return (
     <AuthGuard allowedRoles={["collector","regulator"]}>
       <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
