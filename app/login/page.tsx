@@ -2,11 +2,7 @@
 import { useState } from "react";
 import { login, setAuth } from "@/lib/auth";
 
-const DEMO = [
-  { role:"restaurant", label:"Restaurant", color:"#16a34a", bg:"#dcfce7" },
-  { role:"collector",  label:"Collector",  color:"#3b5bdb", bg:"#eef2ff" },
-  { role:"regulator",  label:"Regulator",  color:"#6741d9", bg:"#ede9fe" },
-];
+
 
 export default function LoginPage() {
   const [email,    setEmail]    = useState("");
@@ -111,27 +107,10 @@ export default function LoginPage() {
             </button>
           </form>
 
-          {/* Demo accounts */}
-          <div style={{ marginTop:24, paddingTop:20, borderTop:"1px solid var(--border)" }}>
-            <p style={{ fontSize:12, color:"var(--text-3)", textAlign:"center", marginBottom:12 }}>
-              Demo accounts — click to fill
+          <div style={{ marginTop:20, textAlign:"center" }}>
+            <p style={{ fontSize:12, color:"var(--text-3)" }}>
+              Contact your administrator for access
             </p>
-            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:8 }}>
-              {DEMO.map(d=>(
-                <button key={d.role}
-                  onClick={()=>{ setEmail(`${d.role}_user@test.com`); setPassword("password"); setError(""); }}
-                  style={{
-                    background:d.bg, border:"none",
-                    borderRadius:8, padding:"8px 0", fontSize:12, fontWeight:600,
-                    color:d.color, cursor:"pointer", fontFamily:"inherit",
-                    transition:"opacity 0.15s",
-                  }}
-                  onMouseEnter={e=>(e.currentTarget.style.opacity="0.8")}
-                  onMouseLeave={e=>(e.currentTarget.style.opacity="1")}>
-                  {d.label}
-                </button>
-              ))}
-            </div>
           </div>
         </div>
       </div>
