@@ -16,11 +16,21 @@ function PageHeader({ title, sub }: { title: string; sub: string }) {
 
 export default function OverviewPage() {
   const [role, setRole] = useState<string | null>(null);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
     const auth = getAuth();
     setRole(auth?.role ?? null);
   }, []);
+
+  // Auto-refresh every 30 seconds for collector
+  useEffect(() => {
+    if (role !== "collector") return;
+    const interval = setInterval(() => {
+      setRefreshKey(k => k + 1);
+    }, 30000);
+    return () => clearInterval(interval);
+  }, [role]);
 
   if (!role) return null;
 
@@ -36,8 +46,8 @@ export default function OverviewPage() {
         <>
           <PageHeader title="Collector Dashboard" sub="All bins status and today's pickup schedule" />
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
-            <BinStatusTable />
-            <PickupScheduleTable />
+            <BinStatusTable key={refreshKey} />
+            <PickupScheduleTable key={refreshKey} />
           </div>
         </>
       )}
