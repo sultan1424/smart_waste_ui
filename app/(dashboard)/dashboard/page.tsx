@@ -28,7 +28,7 @@ export default function OverviewPage() {
     if (role !== "collector") return;
     const interval = setInterval(() => {
       setRefreshKey(k => k + 1);
-    }, 30000);
+    }, 5000);
     return () => clearInterval(interval);
   }, [role]);
 

@@ -41,7 +41,7 @@ export default function BinDetailPage() {
     const interval = setInterval(() => {
       setRefreshKey(k => k + 1);
       fetchBin();
-    }, 30000);
+    }, 5000);
     return () => clearInterval(interval);
   }, [bin_id]);
 
