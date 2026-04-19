@@ -46,8 +46,8 @@ export default function OverviewPage() {
         <>
           <PageHeader title="Collector Dashboard" sub="All bins status and today's pickup schedule" />
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
-            <BinStatusTable key={refreshKey} />
-            <PickupScheduleTable key={refreshKey} />
+            <BinStatusTable refreshKey={refreshKey} />
+            <PickupScheduleTable />
           </div>
         </>
       )}
