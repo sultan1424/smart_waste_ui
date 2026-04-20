@@ -109,7 +109,7 @@ export default function BinDetailPage() {
         </div>
 
         {/* Stat grid */}
-        <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:12 }}>
+        <div style={{ display:"grid", gridTemplateColumns:"repeat(2,1fr)", gap:12 }}>
           <div style={{ background:"var(--bg-3)", borderRadius:12, padding:"16px 18px", border:"1px solid var(--border)" }}>
             <p style={{ fontSize:11, fontWeight:500, color:"var(--text-3)", marginBottom:10, textTransform:"uppercase", letterSpacing:"0.05em" }}>Fill Level</p>
             <div style={{ height:5, borderRadius:99, background:"var(--border)", overflow:"hidden", marginBottom:10 }}>
@@ -119,8 +119,6 @@ export default function BinDetailPage() {
           </div>
           {[
             { label:"Weight",      value:`${bin.latest_telemetry?.weight_kg?.toFixed(2) ?? "—"} kg` },
-            { label:"Temperature", value:`${bin.latest_telemetry?.temp_c?.toFixed(1) ?? "—"} °C`   },
-            { label:"Battery",     value:`${bin.latest_telemetry?.battery_v?.toFixed(2) ?? "—"} V`  },
           ].map(c => (
             <div key={c.label} style={{ background:"var(--bg-3)", borderRadius:12, padding:"16px 18px", border:"1px solid var(--border)" }}>
               <p style={{ fontSize:11, fontWeight:500, color:"var(--text-3)", marginBottom:10, textTransform:"uppercase", letterSpacing:"0.05em" }}>{c.label}</p>

@@ -26,14 +26,14 @@ export default function ForecastTable({ binId }: { binId: string }) {
         <div>
           <h2 style={{ fontSize: 14, fontWeight: 600, color: "var(--text-1)" }}>10-Day Forecast</h2>
           <p style={{ fontSize: 12, color: "var(--text-3)", marginTop: 2 }}>
-            {rows[0]?.model_version ?? "Prophet v1"} · powered by Mohsen's model
+            {rows[0]?.model_version ?? "Prophet v1"} ·-
           </p>
         </div>
       </div>
       <table style={{ width: "100%", borderCollapse: "collapse" }}>
         <thead>
           <tr style={{ borderBottom: "1px solid var(--border)" }}>
-            {["Date","Predicted Fill","Predicted Weight","Recommended Pickup"].map(h => (
+            {["Date","Predicted Fill","Predicted Weight"].map(h => (
               <th key={h} style={{
                 padding: "10px 16px", textAlign: "left",
                 fontSize: 11, fontWeight: 500, color: "var(--text-3)",
@@ -70,11 +70,6 @@ export default function ForecastTable({ binId }: { binId: string }) {
                 <td style={{ padding: "11px 16px" }}>
                   <span className="mono" style={{ fontSize: 12, color: "var(--text-2)" }}>
                     {r.predicted_weight_kg.toFixed(2)} kg
-                  </span>
-                </td>
-                <td style={{ padding: "11px 16px" }}>
-                  <span style={{ fontSize: 12, color: "#60a5fa", fontWeight: 500 }}>
-                    {r.recommended_pickup_date}
                   </span>
                 </td>
               </tr>
