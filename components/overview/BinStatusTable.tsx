@@ -23,7 +23,7 @@ export default function BinStatusTable({ restaurantMode = false, refreshKey = 0 
   const router = useRouter();
 
   useEffect(() => {
-    setLoading(true);
+    if (refreshKey === 0) setLoading(true);
     api.bins()
       .then(data => {
         const auth = getAuth();
@@ -32,9 +32,9 @@ export default function BinStatusTable({ restaurantMode = false, refreshKey = 0 
         } else {
           setBins(data);
         }
+        setLoading(false);
       })
-      .catch(e => setError(e.message))
-      .finally(() => setLoading(false));
+      .catch(e => { setError(e.message); setLoading(false); });
   }, [restaurantMode, refreshKey]);
 
   const filtered = bins.filter(b =>
