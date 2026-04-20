@@ -15,7 +15,6 @@ const navLinks = {
   restaurant: [{ href: "/dashboard", label: "My Bins" }],
   collector: [
     { href: "/dashboard",           label: "Bins"            },
-    { href: "/pickups",             label: "Pickups"         },
     { href: "/route",               label: "Route Optimizer" },
     { href: "/collector-analytics", label: "Analytics"       },
   ],
