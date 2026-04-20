@@ -44,11 +44,8 @@ export default function OverviewPage() {
       )}
       {role === "collector" && (
         <>
-          <PageHeader title="Collector Dashboard" sub="All bins status and today's pickup schedule" />
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
-            <BinStatusTable refreshKey={refreshKey} />
-            <PickupScheduleTable />
-          </div>
+          <PageHeader title="Collector Dashboard" sub="All bins status · auto-refreshes every 5 seconds" />
+          <BinStatusTable refreshKey={refreshKey} />
         </>
       )}
       {role === "regulator" && (
