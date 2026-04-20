@@ -52,10 +52,7 @@ export default function OverviewPage() {
         <>
           <PageHeader title="Operations Overview" sub="Full system monitoring and analytics" />
           <SummaryCards />
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginTop: 4 }}>
-            <BinStatusTable />
-            <PickupScheduleTable />
-          </div>
+          <BinStatusTable />
         </>
       )}
     </div>
