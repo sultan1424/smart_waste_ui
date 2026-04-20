@@ -25,7 +25,8 @@ export default function BinDetailPage() {
   const [refreshKey, setRefreshKey] = useState(0);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
-  const fetchBin = () => {
+const fetchBin = (silent = false) => {
+    if (!silent) setLoading(true);
     api.bin(bin_id)
       .then(data => { setBin(data); setLastUpdated(new Date()); })
       .catch(e => setError(e.message))
@@ -33,14 +34,12 @@ export default function BinDetailPage() {
   };
 
   useEffect(() => {
-    fetchBin();
+    fetchBin(false);
   }, [bin_id]);
 
-  // Auto-refresh every 30 seconds
   useEffect(() => {
     const interval = setInterval(() => {
-      setRefreshKey(k => k + 1);
-      fetchBin();
+      fetchBin(true);
     }, 5000);
     return () => clearInterval(interval);
   }, [bin_id]);
